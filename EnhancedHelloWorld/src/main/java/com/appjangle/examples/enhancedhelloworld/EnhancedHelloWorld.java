@@ -14,10 +14,22 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+/**
+ * 
+ * This class uploads translations of "Hello, World" in five different languages 
+ * on the embedded server, together with the English name of the respective languages; 
+ * it prints the uploaded translations with their uri.
+ *
+ */
 public class EnhancedHelloWorld {
 
 	private static HashMap<String, String> translationsMap = new HashMap<String, String>();
 	
+	/**
+	 * 
+	 * @param args a filename for a file properties which contains the translations to upload.
+	 * If the filename is missing or invalid, 5 default translations will be uploaded.
+	 */
 	public static void main(String[] args) {
 		
 		if(args!=null && args.length>0)
@@ -51,8 +63,7 @@ public class EnhancedHelloWorld {
 		}	
 		
 		session.close();
-		System.out.print("Hello");
-		    
+		System.out.print("Hello"); 
 		
 	}
 
