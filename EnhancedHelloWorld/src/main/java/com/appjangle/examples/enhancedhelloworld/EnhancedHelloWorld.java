@@ -8,6 +8,7 @@ import io.nextweb.jre.Nextweb;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,16 +44,23 @@ public class EnhancedHelloWorld {
 			initTranslations();
 		
 		Session session = Nextweb.createSession();
-		Query aTranslation = session.seed().append("a translation", "./aTranslation");
-		Query alanguage = session.seed().append("a translation", "./aLanguage");
-		Query translations = session.seed().append("translations");
+		Node seedNode = session.seed().get();
+		try {
+			store(seedNode.getUri());
+		} catch (IOException e) {
+			System.out.println("Cannot store uri: ");
+			System.out.println(e);
+		}
+		Query aTranslation = seedNode.append("a translation", "./aTranslation");
+		Query aLanguage = seedNode.append("a language", "./aLanguage");
+		Query translations = seedNode.append("translations", "./translations");
 		for(Entry<String, String> entry : translationsMap.entrySet()){
-			Query message = translations.append(entry.getValue());
-                        Query trans = message.append(aTranslation);
-			trans.append(entry.getKey()).append(alanguage);
+			Node message = translations.append(entry.getValue()).get();			
+            message.append(aTranslation);
+			message.append(entry.getKey()).append(aLanguage);
 		}
 		
-		session.commit();
+		session.commit().get();
 		NodeList translationsList = translations.selectAll().get();
 		
 		Iterator<Node> iterator = translationsList.iterator();
@@ -62,8 +70,14 @@ public class EnhancedHelloWorld {
 			System.out.println(", uri: " + node.uri());
 		}	
 		
-		session.close();
-		System.out.print("Hello"); 
+		session.close().get();		
+		
+	}
+
+	private static void store(String uri) throws FileNotFoundException, IOException {
+		Properties prop = new Properties();
+		prop.put("seedNode", uri);
+		prop.store(new FileOutputStream("uri.properties"), null);
 		
 	}
 
