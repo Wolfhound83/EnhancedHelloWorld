@@ -33,6 +33,7 @@ public class EnhancedHelloWorld {
 	 */
 	public static void main(String[] args) {
 		
+		// instantiating translationMap, which contains the translations to upload
 		if(args!=null && args.length>0)
 			try {
 				initTranslations(args[0]);
@@ -43,7 +44,10 @@ public class EnhancedHelloWorld {
 		else
 			initTranslations();
 		
+		// opening a new session
 		Session session = Nextweb.createSession();
+		
+		// creating and storing the seed node of the application
 		Node seedNode = session.seed().get();
 		try {
 			store(seedNode.getUri());
@@ -51,6 +55,8 @@ public class EnhancedHelloWorld {
 			System.out.println("Cannot store uri: ");
 			System.out.println(e);
 		}
+		
+		// creating nodes for translations and languages
 		Query aTranslation = seedNode.append("a translation", "./aTranslation");
 		Query aLanguage = seedNode.append("a language", "./aLanguage");
 		Query translations = seedNode.append("translations", "./translations");
@@ -59,8 +65,9 @@ public class EnhancedHelloWorld {
             message.append(aTranslation);
 			message.append(entry.getKey()).append(aLanguage);
 		}
-		
 		session.commit().get();
+		
+		// printing the uploaded translations with their uri
 		NodeList translationsList = translations.selectAll().get();
 		
 		Iterator<Node> iterator = translationsList.iterator();
